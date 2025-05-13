@@ -1,5 +1,5 @@
 import axios from "axios";
-const weatherUrl = "https://api.open-meteo.com/v1";
+const weatherUrl = "https://api.open-meteo.com/v1/forecast";
 
 export default class ApiWeather {
   async responseStatusCheck(responseObject) {
@@ -9,15 +9,11 @@ export default class ApiWeather {
     throw new Error(responseObject.statusText);
   }
 
-  async getWeatherData(latitude, longitude, endpoint, params = {}) {
+  async getWeatherData(latitude, longitude) {
     try {
-      const response = await axios.get(`${weatherUrl}/${endpoint}`, {
-        params: {
-          latitude,
-          longitude,
-          ...params,
-        },
-      });
+      const response = await axios.get(
+        `${weatherUrl}/?latitude=${latitude}&longitude=${longitude}`
+      );
       return this.responseStatusCheck(response);
     } catch (error) {
       throw new Error(`Error receiving weather forecast data`);
