@@ -110,45 +110,35 @@ export default function Home() {
   // whats inteded - dropdown to select a city, loading message whilst fetching data, error if something wrong, weather data displayed when fetched.
   return (
     <div>
-      {/*   <select value={city} onChange={(e) => setCity()}>
-      <option value="">Select a city</option>
-      {cities.map((item, index) => (
-        <option key={index} value={item.name}>
-          {item.name}
-        </option>
-      ))}
-    </select> */}
-      <select value={city} onChange={(e) => setCity()}>
-        {cities?.map((item) => {
-          return (
-            <div
-              onClick={() => {
-                setCity(item);
-              }}
-              key={item.name}
-            >
-              {item.name}
-            </div>
-          );
-        })}
+      <select
+        value={city.name}
+        onChange={(e) =>
+          setCity(cities.find((item) => item.name === e.target.value))
+        }
+      >
+        {cities.map((item) => (
+          <option key={item.name} value={item.name}>
+            {item.name}
+          </option>
+        ))}
       </select>
       {loading && <p>Loading weather data...</p>}
-      {error && <p style={{ color: "red" }}>Error: {error}</p>}
-      {!loading && !error && weather && (
-        <p>No weather data available for the selected city.</p>
-      )}
-      (
       <div>
-        <h2>{weather?.name ?? "City not available"}</h2>
-        <p>{weather?.description ?? "No description available"}</p>
-        <p>Temperature: {weather?.temperature ?? "N/A"} °C</p>
-        <p>Wind Speed: {weather?.wind_speed ?? "N/A"}</p>
-        <p>Humidity: {weather?.humidity ?? "N/A"}</p>
-        <p>Sunraise: {weather?.sunraise ?? "N/A"}</p>
-        <p>Sunset:{weather?.sunset ?? "N/A"}</p>
-        <img src={weatherData[weather?.current?.weather_code]?.day?.image} />
+        <h2>{weather?.location?.name ?? "City not available"}</h2>
+        <p>
+          {weather?.current?.weather_description?.[0] ??
+            "No description available"}
+        </p>
+        <p>Temperature: {weather?.current?.temperature ?? "N/A"} °C</p>
+        <p>Wind Speed: {weather?.current?.wind_speed ?? "N/A"}</p>
+        <p>Humidity: {weather?.current?.humidity ?? "N/A"}</p>
+        <p>Sunrise: {weather?.location?.sunrise ?? "N/A"}</p>
+        <p>Sunset:{weather?.location?.sunset ?? "N/A"}</p>
+        <img
+          src={weatherData[weather?.current?.weather_code]?.day?.image}
+          alt="Weather Icon"
+        />
       </div>
-      );
     </div>
   );
 }
@@ -172,4 +162,41 @@ export default function Home() {
 // try-catch handles errors without crashing the app
 // await - waits for the response before moving on.
 
-// questions:
+/*   <select value={city} onChange={(e) => setCity()}>
+      <option value="">Select a city</option>
+      {cities.map((item, index) => (
+        <option key={index} value={item.name}>
+          {item.name}
+        </option>
+      ))}
+    </select> */
+
+// cities.find((item) etc ) - this method loops through the cities array to find the object whose name mataches the selected value
+// find key word is a method to find the entire city object (not just the name)
+// setCity(..) this updats the city state with the selected city object
+// cities.map = iterates over each city in the cities array
+// for each city object (item): an option element created, the key prop helps react keep track of list items / value={item.name} sets teh value of the option to the city name
+// why use key - helps react improve performance by allowing reac to detect changes more efficiently
+// "the key should be a unique identifier" with city names being the unique names in the list.
+
+// API DATA STRUCTURE IF WE GET TYPICAL WEATHER API RESONSE LIKE BELOW; HENCE WHY I ADDED .LOCATION? AND .CURRENT?
+{
+  /* 
+  {
+  "location": {
+    "name": "London",
+    "latitude": "51.5072",
+    "longitude": "-0.1276",
+    "sunrise": "06:00",
+    "sunset": "18:00"
+  },
+  "current": {
+    "temperature": 15,
+    "wind_speed": 5,
+    "humidity": 72,
+    "weather_code": 800,
+    "weather_description": ["Clear sky"]
+  }
+}
+  */
+}
