@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import ApiWeather from "./ApiWeather/weather";
 import { weatherData } from "../../data/data";
+import { Newsreader } from "next/font/google";
 
 const cities = [
   {
@@ -27,7 +28,7 @@ const cities = [
   {
     name: "Madrid, Spain",
     latitude: "40.4167",
-    longitude: "3.7033",
+    longitude: "-3.7037",
   },
   {
     name: "Cairo, Egypt",
@@ -36,8 +37,8 @@ const cities = [
   },
   {
     name: "Brasilia, Brazil",
-    latitude: "15.7975",
-    longitude: "47.8919",
+    latitude: "-15.7975",
+    longitude: "-47.8919",
   },
   {
     name: "New Dehli, India",
@@ -53,7 +54,10 @@ export default function Home() {
   const [city, setCity] = useState(cities[0]); // the selected city from the dropdown
   const [weather, setWeather] = useState(null); // the weather data returned from the api
   const [loading, setLoading] = useState(false); // a boolean to track if data is being fetched
-  const [error, setError] = useState(null); // a string that holds error messages
+  const [error, setError] = useState(null);
+  const [daily, setDaily] = useState([]); // empty array
+
+  // a string that holds error messages
   // important !! the above states allow to update UI when data changes
 
   // using the useEffect to fetch the list of cities only once when the page loads
@@ -87,8 +91,14 @@ export default function Home() {
           city.latitude,
           city.longitude
         );
+        const secondResponse = await apiWeather.getDailyWeatherData(
+          city.latitude,
+          city.longitude
+        );
+        console.log("secondResponse", secondResponse);
         console.log("API Response", response); // store the weather data.
         setWeather(response.data);
+        setDaily(secondResponse.data);
       } catch (error) {
         console.error("Error receiving weather forecast data", error);
         setError(error.message ?? "An unexpected error occured");
@@ -109,12 +119,13 @@ export default function Home() {
   // displaying the UI !!
   // whats inteded - dropdown to select a city, loading message whilst fetching data, error if something wrong, weather data displayed when fetched.
   return (
-    <div>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-blue-100 to-blue-300">
       <select
         value={city.name}
         onChange={(e) =>
           setCity(cities.find((item) => item.name === e.target.value))
         }
+        className="mt-4 mb-10 p-2 border border-gray-300 rounded-lg bg-white shadow-md hover:shadow-lg hover:scale-[1.02] transition-transform duration-200 ease-in-out"
       >
         {cities.map((item) => (
           <option key={item.name} value={item.name}>
@@ -122,23 +133,94 @@ export default function Home() {
           </option>
         ))}
       </select>
-      {loading && <p>Loading weather data...</p>}
-      <div>
-        <h2>{weather?.location?.name ?? "City not available"}</h2>
-        <p>
-          {weather?.current?.weather_description?.[0] ??
+
+      {loading && (
+        <p className="text-center text-gray-600 mb-4">
+          Loading weather data...
+        </p>
+      )}
+      <div className="bg-white rounded-lg shadow-lg w-80 text-center p-6 hover:shadow-xl hover:scale-[1.03] transition-transform duration-200 ease-in-out">
+        <h2 className="text-xl font-semibold mb-2 mt-4">
+          {city.name ?? "City not available"}
+          <a
+            href={`https://www.google.com/maps/@${city.latitude},${city.longitude},10z`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 text-sm hover:underline mt-2 block"
+          >
+            View on Map
+          </a>
+        </h2>
+        <p className="text-gray-600 mb-2">
+          Local Time:{" "}
+          {new Date().toLocaleTimeString("en-US", {
+            timeZone: city.timezone,
+          }) ?? "N/A"}
+        </p>
+        <p className="text-gray-700 mb-1">
+          {weatherData[weather?.current?.weather_code]?.day?.description ??
             "No description available"}
         </p>
-        <p>Temperature: {weather?.current?.temperature ?? "N/A"} °C</p>
-        <p>Wind Speed: {weather?.current?.wind_speed ?? "N/A"}</p>
-        <p>Humidity: {weather?.current?.humidity ?? "N/A"}</p>
-        <p>Sunrise: {weather?.location?.sunrise ?? "N/A"}</p>
-        <p>Sunset:{weather?.location?.sunset ?? "N/A"}</p>
         <img
+          className="w-24 h-24 mx-auto mt-4 mb-4 hover:scale-[1.2] transition-transform duration-200 ease-in-out"
           src={weatherData[weather?.current?.weather_code]?.day?.image}
           alt="Weather Icon"
         />
+        <p className="text-gray-600">
+          Temperature: {weather?.current?.temperature_2m ?? "N/A"} °C
+        </p>
+        <p className="text-gray-600">
+          Wind Speed: {weather?.current?.wind_speed_10m ?? "N/A"}
+        </p>
+        <p className="text-gray-600">
+          Sunrise: {weather?.daily.sunrise[0].slice(-5) ?? "N/A"}
+        </p>
+        <p className="text-gray-600 mb-4">
+          Sunset: {weather?.daily.sunset[0].slice(-5) ?? "N/A"}
+        </p>
       </div>
+
+      <div className="bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg w-full max-w-3xl text-center p-6 hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 ease-in-out mt-10">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+          Temperature Over the Next 7 Days
+        </h2>
+
+        <div className="flex space-x-3 overflow-x-auto p-2 bg-white rounded-xl shadow-inner">
+          {daily?.daily?.temperature_2m_max.map((item, index) => {
+            const date = new Date();
+            date.setDate(date.getDate() + index);
+            const futureDate = date.toLocaleDateString("en-GB", {
+              weekday: "short",
+              day: "2-digit",
+              month: "short",
+            });
+            return (
+              <div
+                key={index}
+                className="flex flex-col items-center justify-center p-4 min-w-[80px] bg-gradient-to-t from-gray-50 to-gray-100 rounded-md shadow-md transform transition duration-300 hover:scale-105 hover:shadow-xl"
+              >
+                <p className="text-md font-semibold text-gray-600">
+                  {futureDate}
+                </p>
+                <p className="text-l font-bold text-gray-900">{item} °C</p>
+              </div>
+            );
+          }) ?? "N/A"}
+        </div>
+      </div>
+
+      <footer className="text-center mt-8 text-gray-600">
+        Powered by FunkMafia x JDC x Wahab
+        <br />
+        <a
+          href="https://github.com/funkmafia/WeatherApp"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-600 hover:underline"
+        >
+          View Project on GitHub
+        </a>
+      </footer>
     </div>
   );
 }
