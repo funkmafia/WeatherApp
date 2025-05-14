@@ -119,13 +119,13 @@ export default function Home() {
   // displaying the UI !!
   // whats inteded - dropdown to select a city, loading message whilst fetching data, error if something wrong, weather data displayed when fetched.
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-blue-100 to-blue-300">
       <select
         value={city.name}
         onChange={(e) =>
           setCity(cities.find((item) => item.name === e.target.value))
         }
-        className="mt-4 mb-4 p-2 border border-gray-300 rounded-lg bg-white shadow-md hover:shadow-lg hover:scale-[1.02] transition-transform duration-200 ease-in-out"
+        className="mt-4 mb-10 p-2 border border-gray-300 rounded-lg bg-white shadow-md hover:shadow-lg hover:scale-[1.02] transition-transform duration-200 ease-in-out"
       >
         {cities.map((item) => (
           <option key={item.name} value={item.name}>
@@ -135,9 +135,11 @@ export default function Home() {
       </select>
 
       {loading && (
-        <p className="text-center text-gray-600">Loading weather data...</p>
+        <p className="text-center text-gray-600 mb-4">
+          Loading weather data...
+        </p>
       )}
-      <div className="bg-white rounded-lg shadow-lg w-80 text-center hover:shadow-xl hover:scale-[1.02] transition-transform duration-200 ease-in-out">
+      <div className="bg-white rounded-lg shadow-lg w-80 text-center p-6 hover:shadow-xl hover:scale-[1.03] transition-transform duration-200 ease-in-out">
         <h2 className="text-xl font-semibold mb-2 mt-4">
           {city.name ?? "City not available"}
           <a
@@ -178,12 +180,12 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg w-full max-w-3xl text-center p-6 hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 ease-in-out">
+      <div className="bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg w-full max-w-3xl text-center p-6 hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 ease-in-out mt-10">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Temperature Over the Next 7 Days
         </h2>
 
-        <div className="flex space-x-3 overflow-x-auto p-4 bg-white rounded-xl shadow-inner">
+        <div className="flex space-x-3 overflow-x-auto p-2 bg-white rounded-xl shadow-inner">
           {daily?.daily?.temperature_2m_max.map((item, index) => {
             const date = new Date();
             date.setDate(date.getDate() + index);
@@ -195,12 +197,12 @@ export default function Home() {
             return (
               <div
                 key={index}
-                className="flex flex-col items-center justify-center p-4 min-w-[90px] bg-gradient-to-t from-gray-50 to-gray-100 rounded-md shadow-md transform transition duration-300 hover:scale-105 hover:shadow-xl"
+                className="flex flex-col items-center justify-center p-4 min-w-[80px] bg-gradient-to-t from-gray-50 to-gray-100 rounded-md shadow-md transform transition duration-300 hover:scale-105 hover:shadow-xl"
               >
                 <p className="text-md font-semibold text-gray-600">
                   {futureDate}
                 </p>
-                <p className="text-2xl font-bold text-gray-900">{item} °C</p>
+                <p className="text-l font-bold text-gray-900">{item} °C</p>
               </div>
             );
           }) ?? "N/A"}
