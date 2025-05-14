@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import ApiWeather from "./ApiWeather/weather";
 import { weatherData } from "../../data/data";
+import { Newsreader } from "next/font/google";
 
 const cities = [
   {
@@ -139,11 +140,30 @@ export default function Home() {
       <div className="bg-white rounded-lg shadow-lg w-80 text-center hover:shadow-xl hover:scale-[1.02] transition-transform duration-200 ease-in-out">
         <h2 className="text-xl font-semibold mb-2 mt-4">
           {city.name ?? "City not available"}
+          <a
+            href={`https://www.google.com/maps/@${city.latitude},${city.longitude},10z`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 text-sm hover:underline mt-2 block"
+          >
+            View on Map
+          </a>
         </h2>
+        <p className="text-gray-600 mb-2">
+          Local Time:{" "}
+          {new Date().toLocaleTimeString("en-US", {
+            timeZone: city.timezone,
+          }) ?? "N/A"}
+        </p>
         <p className="text-gray-700 mb-1">
           {weatherData[weather?.current?.weather_code]?.day?.description ??
             "No description available"}
         </p>
+        <img
+          className="w-24 h-24 mx-auto mt-4 mb-4 hover:scale-[1.2] transition-transform duration-200 ease-in-out"
+          src={weatherData[weather?.current?.weather_code]?.day?.image}
+          alt="Weather Icon"
+        />
         <p className="text-gray-600">
           Temperature: {weather?.current?.temperature_2m ?? "N/A"} °C
         </p>
@@ -151,29 +171,53 @@ export default function Home() {
           Wind Speed: {weather?.current?.wind_speed_10m ?? "N/A"}
         </p>
         <p className="text-gray-600">
-          Sunrise:{weather?.daily.sunrise[0].slice(-5) ?? "N/A"}
+          Sunrise: {weather?.daily.sunrise[0].slice(-5) ?? "N/A"}
         </p>
-        <p className="text-gray-600">
-          Sunset:{weather?.daily.sunset[0].slice(-5) ?? "N/A"}
+        <p className="text-gray-600 mb-4">
+          Sunset: {weather?.daily.sunset[0].slice(-5) ?? "N/A"}
         </p>
-        <img
-          className="w-24 h-24 mx-auto mt-4 mb-6 hover:scale-[1.2] transition-transform duration-200 ease-in-out"
-          src={weatherData[weather?.current?.weather_code]?.day?.image}
-          alt="Weather Icon"
-        />
       </div>
-      <div className="mt-4 p-4 bg-blue-100 rounded-lg shadow w-full max-w-xl hover:scale-[1.03] transition-transform duration-200 ease-in-out">
-        <h2 className="text-lg font-semibold mb-2 text-center">
-          Temperature over the next 7 days
+
+      <div className="bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg w-full max-w-3xl text-center p-6 hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 ease-in-out">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+          Temperature Over the Next 7 Days
         </h2>
-        <div className="flex space-x-4 overflow-x-auto">
-          {daily?.daily?.temperature_2m_max.map((item) => {
-            return <p className="text-gray-700">{item} °C</p>;
+
+        <div className="flex space-x-3 overflow-x-auto p-4 bg-white rounded-xl shadow-inner">
+          {daily?.daily?.temperature_2m_max.map((item, index) => {
+            const date = new Date();
+            date.setDate(date.getDate() + index);
+            const futureDate = date.toLocaleDateString("en-GB", {
+              weekday: "short",
+              day: "2-digit",
+              month: "short",
+            });
+            return (
+              <div
+                key={index}
+                className="flex flex-col items-center justify-center p-4 min-w-[90px] bg-gradient-to-t from-gray-50 to-gray-100 rounded-md shadow-md transform transition duration-300 hover:scale-105 hover:shadow-xl"
+              >
+                <p className="text-md font-semibold text-gray-600">
+                  {futureDate}
+                </p>
+                <p className="text-2xl font-bold text-gray-900">{item} °C</p>
+              </div>
+            );
           }) ?? "N/A"}
         </div>
       </div>
-      <footer className="mt-8 text-gray-500">
-        Powered by TDA x FunkMafia x JDC x Wahab
+
+      <footer className="text-center mt-8 text-gray-500">
+        Powered by FunkMafia x JDC x Wahab
+        <br />
+        <a
+          href="https://github.com/funkmafia/WeatherApp"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 hover:underline"
+        >
+          View Project on GitHub
+        </a>
       </footer>
     </div>
   );

@@ -36,15 +36,3 @@ export default class ApiWeather {
     }
   }
 }
-
-// Method 1 -
-// Checks if HTTP response status is within the range of 200-299 (success codes)
-// If not, throws error, standard stuff.
-// Why async, just ensures the method waits for the response before proceeding.
-
-// Method 2 -
-
-// Method 3 -
-// Fetches weather based on the city name
-// Uses axios.get to send a GET request with the city name as a parameter
-// Why we are using parameters? makes the function flexible for various city names, uses object destructuring to allow input modification
