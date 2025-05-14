@@ -28,7 +28,7 @@ const cities = [
   {
     name: "Madrid, Spain",
     latitude: "40.4167",
-    longitude: "3.7033",
+    longitude: "-3.7037",
   },
   {
     name: "Cairo, Egypt",
@@ -37,8 +37,8 @@ const cities = [
   },
   {
     name: "Brasilia, Brazil",
-    latitude: "15.7975",
-    longitude: "47.8919",
+    latitude: "-15.7975",
+    longitude: "-47.8919",
   },
   {
     name: "New Dehli, India",
@@ -209,14 +209,14 @@ export default function Home() {
         </div>
       </div>
 
-      <footer className="text-center mt-8 text-gray-500">
+      <footer className="text-center mt-8 text-gray-600">
         Powered by FunkMafia x JDC x Wahab
         <br />
         <a
           href="https://github.com/funkmafia/WeatherApp"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-400 hover:underline"
+          className="text-gray-600 hover:underline"
         >
           View Project on GitHub
         </a>
