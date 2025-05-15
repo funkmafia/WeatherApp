@@ -180,8 +180,8 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg w-full max-w-3xl text-center p-6 hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 ease-in-out mt-10">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+      <div className="bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg w-full max-w-4xl text-center p-6 hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 ease-in-out mt-10">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
           Temperature Over the Next 7 Days
         </h2>
 
@@ -194,15 +194,29 @@ export default function Home() {
               day: "2-digit",
               month: "short",
             });
+            console.log(index);
+            console.log(daily?.daily);
+            // extracting the weather code for each day??
+            const futureWeatherCode = daily?.daily?.weather_code[index];
+            console.log(futureWeatherCode);
+
             return (
               <div
                 key={index}
-                className="flex flex-col items-center justify-center p-4 min-w-[80px] bg-gradient-to-t from-gray-50 to-gray-100 rounded-md shadow-md transform transition duration-300 hover:scale-105 hover:shadow-xl"
+                className="flex flex-col items-center justify-center p-4 min-w-[85px] bg-gradient-to-t from-gray-50 to-gray-100 rounded-md shadow-md transform transition duration-300 hover:scale-105 hover:shadow-xl"
               >
                 <p className="text-md font-semibold text-gray-600">
                   {futureDate}
                 </p>
                 <p className="text-l font-bold text-gray-900">{item} °C</p>
+                <img
+                  className=""
+                  src={
+                    weatherData[futureWeatherCode]?.day?.image ??
+                    weatherData[0].day.image
+                  }
+                  alt="Weather Icon"
+                />
               </div>
             );
           }) ?? "N/A"}
@@ -210,7 +224,7 @@ export default function Home() {
       </div>
 
       <footer className="text-center mt-8 text-gray-600">
-        Powered by FunkMafia x JDC x Wahab
+        Powered by FunkMafia x JDC
         <br />
         <a
           href="https://github.com/funkmafia/WeatherApp"
