@@ -1,8 +1,18 @@
 "use client";
+// A pure function that takes temperature in Celsius and returns it in Fahrenheit
+
 import { useState, useEffect } from "react";
 import ApiWeather from "./ApiWeather/weather";
 import { weatherData } from "../../data/data";
-import { Newsreader } from "next/font/google";
+
+function celsiusToFahrenheit(celsius) {
+  if (typeof celsius !== "number" || isNaN(celsius)) {
+    return NaN;
+  }
+  return (celsius * 9) / 5 + 32;
+}
+
+export { celsiusToFahrenheit };
 
 const cities = [
   {
@@ -294,5 +304,7 @@ export default function Home() {
     "weather_description": ["Clear sky"]
   }
 }
+
+export { celsiusToFahrenheit };
   */
 }
