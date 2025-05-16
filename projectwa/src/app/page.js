@@ -18,41 +18,49 @@ const cities = [
     name: "London, UK",
     latitude: "51.5072",
     longitude: "0.1276",
+    timezone: "Europe/London",
   },
   {
     name: "Tokyo, Japan",
     latitude: "35.6764",
     longitude: "139.839478",
+    timezone: "Asia/Tokyo",
   },
   {
     name: "Paris, France",
     latitude: "48.8575",
     longitude: "2.3514",
+    timezone: "Europe/Paris",
   },
   {
     name: "Washington DC, United States America",
     latitude: "38.9072",
     longitude: "77.0369",
+    timezone: "America/New_York",
   },
   {
     name: "Madrid, Spain",
     latitude: "40.4167",
     longitude: "-3.7037",
+    timezone: "Europe/Madrid",
   },
   {
     name: "Cairo, Egypt",
     latitude: "30.0444",
     longitude: "31.2357",
+    timezone: "Africa/Cairo",
   },
   {
     name: "Brasilia, Brazil",
     latitude: "-15.7975",
     longitude: "-47.8919",
+    timezone: "America/Sao_Paulo",
   },
   {
     name: "New Dehli, India",
     latitude: "28.6139",
     longitude: "77.2088",
+    timezone: "Asia/Kolkata",
   },
 ];
 
@@ -64,6 +72,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [daily, setDaily] = useState([]);
+  const [currentDay, setCurrentDay] = useState(0);
 
   useEffect(() => {
     const fetchWeather = async () => {
@@ -78,10 +87,17 @@ export default function Home() {
           city.latitude,
           city.longitude
         );
+        //   const thirdResponse = await apiWeather.getFutureWeatherData(
+        //   city.latitude,
+        // city.longitude
+        // );
+
         console.log("secondResponse", secondResponse);
         console.log("API Response", response);
+
         setWeather(response.data);
         setDaily(secondResponse.data);
+        //      setFuture(thirdResponse.data);
       } catch (error) {
         console.error("Error receiving weather forecast data", error);
         setError(error.message ?? "An unexpected error occured");
@@ -94,6 +110,18 @@ export default function Home() {
       fetchWeather();
     }
   }, [city]);
+
+  const handlePrevDay = () => {
+    setCurrentDay((prev) =>
+      prev > 0 ? prev - 1 : daily?.daily?.temperature_2m_max.length - 1
+    );
+  };
+
+  const handleNextDay = () => {
+    setCurrentDay((prev) =>
+      prev < daily?.daily?.temperature_2m_max.length - 1 ? prev + 1 : 0
+    );
+  };
 
   useEffect(() => {
     console.log(weatherData[weather?.current?.weather_code]?.day?.image);
@@ -122,6 +150,27 @@ export default function Home() {
       )}
       <div className="bg-white rounded-lg shadow-lg h-auto text-center p-8 sm:w-full md:w-96 hover:shadow-2xl hover:scale-[1.05] transition-transform duration-300 ease-in-out">
         {" "}
+        <div className="flex items-center justify-center gap-4 my-4">
+          <button
+            onClick={handlePrevDay}
+            className="p-2 bg-gray-100 hover:bg-gray-300"
+          >
+            ←
+          </button>
+          <span className="text-xl font-semibold">
+            {new Date().toLocaleDateString("en-GB", {
+              weekday: "short",
+              day: "2-digit",
+              month: "short",
+            })}
+          </span>
+          <button
+            onClick={handleNextDay}
+            className="p-2  bg-gray-100 hover:bg-gray-300"
+          >
+            →
+          </button>
+        </div>
         <h2 className="text-xl font-semibold mb-2 mt-4">
           {city.name ?? "City not available"}
           <a
@@ -134,9 +183,12 @@ export default function Home() {
           </a>
         </h2>
         <p className="text-gray-600 mb-2">
-          Local Time:{" "}
-          {new Date().toLocaleTimeString("en-US", {
+          Time in {city.name}:{" "}
+          {new Date().toLocaleTimeString("en-GB", {
             timeZone: city.timezone,
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
           }) ?? "N/A"}
         </p>
         <p className="text-gray-700 mb-1 font-semibold">
@@ -148,7 +200,7 @@ export default function Home() {
           src={weatherData[weather?.current?.weather_code]?.day?.image}
           alt="Weather Icon"
         />
-        <p className="text-gray-600">
+        <p className="text-gray-600 font-semibold">
           Temperature: {weather?.current?.temperature_2m ?? "N/A"} °C
         </p>
         <p className="text-gray-600">
@@ -204,7 +256,6 @@ export default function Home() {
             console.log(daily?.daily);
 
             const futureWeatherCode = daily?.daily?.weather_code[index];
-            console.log(futureWeatherCode);
 
             return (
               <div

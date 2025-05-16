@@ -36,3 +36,16 @@ export default class ApiWeather {
     }
   }
 }
+
+/*
+  async getFutureWeatherData(latitude, longitude) {
+    try {
+      const response = await axios.get(
+        `${weatherUrl}/?latitude=${latitude}&longitude=${longitude}&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`
+      );
+      return this.responseStatusCheck(response);
+    } catch (error) {
+      throw new Error(`Error receiving weather forecast data`);
+    }
+  }
+} */
