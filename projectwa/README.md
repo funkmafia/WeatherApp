@@ -34,7 +34,6 @@ The Weather App is a sleek and modern Single Page Application (SPA) that provide
 
 - **Zak:** The Code whisperer
 - **Joshua:** The API whisperer
-- **Wahab:** The Features whisperer
 
 Together, they form a powerhouse of creativity and code magic! 💪
 
