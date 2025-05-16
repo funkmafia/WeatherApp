@@ -1,5 +1,4 @@
 "use client";
-// A pure function that takes temperature in Celsius and returns it in Fahrenheit
 
 import { useState, useEffect } from "react";
 import ApiWeather from "./ApiWeather/weather";
@@ -57,45 +56,19 @@ const cities = [
   },
 ];
 
-const apiWeather = new ApiWeather(); //This instance is created from the apiweateher class from weather.js file
-// why - need this instance to call methods like getCities() and getWeatherByFilter() later in the cde.
+const apiWeather = new ApiWeather();
 
 export default function Home() {
-  const [city, setCity] = useState(cities[0]); // the selected city from the dropdown
-  const [weather, setWeather] = useState(null); // the weather data returned from the api
-  const [loading, setLoading] = useState(false); // a boolean to track if data is being fetched
+  const [city, setCity] = useState(cities[0]);
+  const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [daily, setDaily] = useState([]); // empty array
+  const [daily, setDaily] = useState([]);
 
-  // a string that holds error messages
-  // important !! the above states allow to update UI when data changes
-
-  // using the useEffect to fetch the list of cities only once when the page loads
-  // why - to populate the dropdown when the component loads
-  // useEffect doesnt directly support async, so always define an async function inside and call the function.
-  // WORK ON CALLING FUNCTIONS
-  // useEffect(() => {
-  //   // fetching cities when the page loads !!
-  //   const fetchCities = async () => {
-  //     try {
-  //       const response = await apiWeather.getCities();
-  //       setCities(response.data.cities);
-  //     } catch (error) {
-  //       console.error("Error fetching cities", error.message);
-  //       setError("Failed to load cities");
-  //     }
-  //   };
-  //   fetchCities();
-  // }, []); // empty array means run only once
-
-  // When the selected city changes, the effect runs to fetch the weather dta
-  // react updates the component when the city state changes
-  // why - to manage the uI when the data is being fetched.
   useEffect(() => {
     const fetchWeather = async () => {
-      // fetching weather once the city changes!!
-      setLoading(true); // starts loaiding
-      setError(null); // clears any previous errors
+      setLoading(true);
+      setError(null);
       try {
         const response = await apiWeather.getWeatherData(
           city.latitude,
@@ -106,28 +79,26 @@ export default function Home() {
           city.longitude
         );
         console.log("secondResponse", secondResponse);
-        console.log("API Response", response); // store the weather data.
+        console.log("API Response", response);
         setWeather(response.data);
         setDaily(secondResponse.data);
       } catch (error) {
         console.error("Error receiving weather forecast data", error);
         setError(error.message ?? "An unexpected error occured");
       } finally {
-        setLoading(false); // stop loading
+        setLoading(false);
       }
     };
 
     if (city) {
       fetchWeather();
     }
-  }, [city]); // run when 'city' changes
+  }, [city]);
 
   useEffect(() => {
     console.log(weatherData[weather?.current?.weather_code]?.day?.image);
   }, [weather]);
 
-  // displaying the UI !!
-  // whats inteded - dropdown to select a city, loading message whilst fetching data, error if something wrong, weather data displayed when fetched.
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-b from-blue-100 to-blue-300">
       <select
@@ -149,7 +120,8 @@ export default function Home() {
           Loading weather data...
         </p>
       )}
-      <div className="bg-white rounded-lg shadow-lg w-80 text-center p-6 hover:shadow-xl hover:scale-[1.03] transition-transform duration-200 ease-in-out">
+      <div className="bg-white rounded-lg shadow-lg h-auto text-center p-8 sm:w-full md:w-96 hover:shadow-2xl hover:scale-[1.05] transition-transform duration-300 ease-in-out">
+        {" "}
         <h2 className="text-xl font-semibold mb-2 mt-4">
           {city.name ?? "City not available"}
           <a
@@ -167,7 +139,7 @@ export default function Home() {
             timeZone: city.timezone,
           }) ?? "N/A"}
         </p>
-        <p className="text-gray-700 mb-1">
+        <p className="text-gray-700 mb-1 font-semibold">
           {weatherData[weather?.current?.weather_code]?.day?.description ??
             "No description available"}
         </p>
@@ -180,7 +152,7 @@ export default function Home() {
           Temperature: {weather?.current?.temperature_2m ?? "N/A"} °C
         </p>
         <p className="text-gray-600">
-          Wind Speed: {weather?.current?.wind_speed_10m ?? "N/A"}
+          Wind Speed: {weather?.current?.wind_speed_10m ?? "N/A"}kmh
         </p>
         <p className="text-gray-600">
           Sunrise: {weather?.daily.sunrise[0].slice(-5) ?? "N/A"}
@@ -188,6 +160,30 @@ export default function Home() {
         <p className="text-gray-600 mb-4">
           Sunset: {weather?.daily.sunset[0].slice(-5) ?? "N/A"}
         </p>
+        <div className="collapsible">
+          <input
+            type="checkbox"
+            id="collapsible"
+            className="toggle hidden peer"
+          />
+          <label
+            htmlFor="collapsible"
+            className="inline-block bg-blue-200 text-gray-900 font-semibold px-4 py-2 rounded-md transition-all duration-300 ease-in-out hover:bg-blue-450 hover:shadow-md hover:scale-105 mt-4"
+          >
+            More Weather Details
+          </label>
+          <div className="max-h-0 overflow-hidden peer-checked:max-h-40 transition-max-height duration-300p-2 rounded">
+            <p className="text-gray-600 mt-6">
+              UV Index: {weather?.daily?.uv_index_max[0] ?? "N/A"}
+            </p>
+            <p className="text-gray-600">
+              Wind Direction: {weather?.current?.wind_direction_10m ?? "N/A"}°
+            </p>
+            <p className="text-gray-600">
+              Humidity: {weather?.current?.relative_humidity_2m ?? "N/A"}%
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="bg-gradient-to-r from-blue-100 to-blue-300 rounded-lg shadow-lg w-full max-w-4xl text-center p-6 hover:shadow-xl hover:scale-[1.02] transition-transform duration-300 ease-in-out mt-10">
@@ -206,7 +202,7 @@ export default function Home() {
             });
             console.log(index);
             console.log(daily?.daily);
-            // extracting the weather code for each day??
+
             const futureWeatherCode = daily?.daily?.weather_code[index];
             console.log(futureWeatherCode);
 
@@ -244,67 +240,15 @@ export default function Home() {
         >
           View Project on GitHub
         </a>
+        <a
+          href="https://github.com/funkmafia/WeatherApp"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gray-600 hover:underline"
+        >
+          <i className="fab fa-github text-xl text-gray-800"></i>
+        </a>
       </footer>
     </div>
   );
-}
-
-// getWeatherData - when we have precise coordinates
-// getWeatherByFilter - when the user choices the city or enters the city name??
-
-// changed city to item.name because that only works if API returns a list of city names, not objects.
-// I believe we are obtaining objects based on the long and latt basis.
-
-// weather?.name ?? "City not available"
-// weather?.description ?? "No information available"
-// Temperature: {weather?. tempature ?? "N/A"}
-
-// == overview for indepth understanding == //
-/* using a class instance (apiWeather) to fetch data, good for keeping api logic seperate from ui 
-  - states are used to manage the current city, weather data, loading state, erros 
-*/
-
-// remember the empty array [] at the end of the basic styanx of a useEffect means it only runs once(when the page loads)
-// try-catch handles errors without crashing the app
-// await - waits for the response before moving on.
-
-/*   <select value={city} onChange={(e) => setCity()}>
-      <option value="">Select a city</option>
-      {cities.map((item, index) => (
-        <option key={index} value={item.name}>
-          {item.name}
-        </option>
-      ))}
-    </select> */
-
-// cities.find((item) etc ) - this method loops through the cities array to find the object whose name mataches the selected value
-// find key word is a method to find the entire city object (not just the name)
-// setCity(..) this updats the city state with the selected city object
-// cities.map = iterates over each city in the cities array
-// for each city object (item): an option element created, the key prop helps react keep track of list items / value={item.name} sets teh value of the option to the city name
-// why use key - helps react improve performance by allowing reac to detect changes more efficiently
-// "the key should be a unique identifier" with city names being the unique names in the list.
-
-// API DATA STRUCTURE IF WE GET TYPICAL WEATHER API RESONSE LIKE BELOW; HENCE WHY I ADDED .LOCATION? AND .CURRENT?
-{
-  /* 
-  {
-  "location": {
-    "name": "London",
-    "latitude": "51.5072",
-    "longitude": "-0.1276",
-    "sunrise": "06:00",
-    "sunset": "18:00"
-  },
-  "current": {
-    "temperature": 15,
-    "wind_speed": 5,
-    "humidity": 72,
-    "weather_code": 800,
-    "weather_description": ["Clear sky"]
-  }
-}
-
-export { celsiusToFahrenheit };
-  */
 }

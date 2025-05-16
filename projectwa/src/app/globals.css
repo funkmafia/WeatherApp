@@ -1,2 +1,7 @@
 @import "tailwindcss";
 
+/* Global CSS (globals.css) */
+.collapsible .toggle {
+    display: none;
+  }
+  

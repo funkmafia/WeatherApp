@@ -15,7 +15,7 @@ export default class ApiWeather {
     console.log(longitude);
     try {
       const response = await axios.get(
-        `${weatherUrl}/?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m,weather_code,rain,showers,snowfall,is_day&daily=sunrise,sunset&timezone=auto`
+        `${weatherUrl}/?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,wind_direction_10m,weather_code,rain,showers,snowfall,is_day&daily=sunrise,sunset,uv_index_max,&timezone=auto,`
       );
       return this.responseStatusCheck(response);
     } catch (error) {
