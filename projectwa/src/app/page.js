@@ -134,7 +134,7 @@ export default function Home() {
         onChange={(e) =>
           setCity(cities.find((item) => item.name === e.target.value))
         }
-        className="mt-4 mb-10 p-2 border border-gray-300 rounded-lg bg-white shadow-md hover:shadow-lg hover:scale-[1.02] transition-transform duration-200 ease-in-out"
+        className="w-96 h-10 mt-4 mb-6 p-2 border border-gray-500 rounded-lg bg-white shadow-md hover:shadow-lg hover:scale-[1.02] transition-transform duration-200 ease-in-out"
       >
         {cities.map((item) => (
           <option key={item.name} value={item.name}>
